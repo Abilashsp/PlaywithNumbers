@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Button } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
 export default function ShowResult({ route ,navigation}) {
-    const { paramKey, Correctanswer,StoreQuestion } = route.params;
+    const { paramKey, Correctanswer,StoreQuestion,attemptsInfo } = route.params;
     const[showdashboard,setshowdashboard]=useState(true);
   return (
     <View className="h-full w-full ">
@@ -13,7 +13,7 @@ export default function ShowResult({ route ,navigation}) {
     </View>
     <View className=" flex-row justify-center items-center mt-6">
         <View className=" border-b border-gray-200 bg-white px-4 py-5 sm:px-6 rounded-xl bg-blue-500">
-        <Text className="text-4xl text-white" onPress={ ()=>{navigation.navigate('Dashboard', {StoreQuestion:StoreQuestion,showdashboard:showdashboard})}}>View Dashboard</Text>
+        <Text className="text-4xl text-white" onPress={ ()=>{navigation.navigate('Dashboard', {StoreQuestion:StoreQuestion,showdashboard:showdashboard ,attemptsInfo:attemptsInfo})}}>View Dashboard</Text>
         </View>
     </View>
     </View>

@@ -48,6 +48,9 @@ const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) 
   const [storeCorrectAnswer, setStoreCorrectAnswer] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const[StoreQuestion,setStoreQuestion]=useState([])
+  const [attemptsInfo, setAttemptsInfo] = useState([
+    { firstAttempt: false, secondAttempt: false, thirdAttempt: false },
+  ]);
 
   
 
@@ -86,7 +89,19 @@ setStoreCorrectAnswer(prev=>prev+1)
           setQuestion(generateQuestion(count, totalbuttonvalues));
           setQuestionCount((prev) => prev - 1);
           setSelectedAnswer(null);
-          setStoreQuestion((prevQuestions) => [...prevQuestions, question]);
+          setStoreQuestion((prevQuestions) => [...prevQuestions,question] );
+         if(attempts==0) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: true, secondAttempt: false, thirdAttempt: false },
+          ]);
+          if(attempts==1) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: false, secondAttempt: true, thirdAttempt: false },
+          ]);
+          if(attempts==2) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: false, secondAttempt: false, thirdAttempt: true },
+          ]);
           setIsCorrect(null);
           setAttempts(0);
         } else {
@@ -106,7 +121,12 @@ setStoreCorrectAnswer(prev=>prev+1)
         setIsCorrect(null);
       }, 1000);
 
+
       if (attempts >= 2) {
+        setAttemptsInfo((prevAttemptsInfo) => [
+          ...prevAttemptsInfo,
+          { firstAttempt: false, secondAttempt: false, thirdAttempt:false },
+        ])
         setTimeout(() => {
           if (questionCount > 1) {
             setQuestion(generateQuestion(count, totalbuttonvalues));
@@ -127,6 +147,7 @@ setStoreCorrectAnswer(prev=>prev+1)
     return `${minutes}m:${seconds < 10 ? '0' : ''}${seconds}`;
   };
   setstorequestionhere(StoreQuestion)
+
   return (
     <View className="w-full h-full bg-white">
       {!timesUp ? (
@@ -163,7 +184,7 @@ setStoreCorrectAnswer(prev=>prev+1)
       ) : (
         <View className="flex-col items-center justify-center ">
           <Text className=" items-center mt-64 text-2xl">Good Work!</Text>
-          <Text className="inline-flex  w-20 items-center rounded-md bg-blue-400/10 px-2 py-1 text-xl font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30" onPress={() => navigation.navigate('ShowResult', { paramKey: totalNoquestions, Correctanswer: storeCorrectAnswer ,StoreQuestion:StoreQuestion})}>Show Result</Text>
+          <Text className="inline-flex  w-20 items-center rounded-md bg-blue-400/10 px-2 py-1 text-xl font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30" onPress={() => navigation.navigate('ShowResult', { paramKey: totalNoquestions, Correctanswer: storeCorrectAnswer ,StoreQuestion:StoreQuestion,attemptsInfo:attemptsInfo})}>Show Result</Text>
         </View>
       )}
     </View>
