@@ -1,61 +1,37 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { Table, Row, Rows } from 'react-native-table-component';
 import * as SQLite from 'expo-sqlite';
-import React, { useState, useEffect } from 'react';
 
+const Dashboard = ({ route, navigation }) => {
+  const { data, refreshlist } = route.params;
 
-export default function Dashboard({ route, navigation }) {
-  const { StoreQuestion,showdashboard,attemptsInfo } = route.params;
-  const [data, setdata] = useState([]);
-
-  const db = SQLite.openDatabase("dashboard.db");
   useEffect(() => {
-    db.transaction((t) => {
-        db.transaction((t) => {
-            t.executeSql(
-                "CREATE TABLE IF NOT EXISTS DashboardTable (id INTEGER PRIMARY KEY AUTOINCREMENT, GenerateQuestions TEXT, FirstAttempts TEXT,SecondAttempts TEXT,ThirdAttempts TEXT);",
-                [],
-              );
-          });
-        }
-    )
-    db.transaction((t) => {
-        StoreQuestion.forEach((d,index) => {
-          let question = `${d.num1}*${d.num2}`;
-          let attempts = attemptsInfo[index+1];
-          console.log(attempts)
-          t.executeSql(
-            "INSERT INTO DashboardTable (GenerateQuestions, FirstAttempts,SecondAttempts,ThirdAttempts) VALUES (?, ?,?,?);",
-            [question, attempts.firstAttempt,attempts.secondAttempt,attempts.thirdAttempt],
-            (_, insertResult) => {
-              if (insertResult.rowsAffected > 0) {
-                console.log(`Successfully inserted: ${question}`);
-              } else {
-                console.warn(`No rows inserted for: ${question}`);
-              }
-            },
-            (_, insertError) => {
-              console.error("Error inserting into DashboardTable:", insertError);
-            }
-          );
-        });
-      });
-      db.transaction((t) => {
-        t.executeSql("SELECT * FROM DashboardTable", null, (_, { rows }) => {
-          const data = rows._array;
-          setdata(data);
-          console.log("data",data);
-        });
-      });
+    refreshlist();
+  }, [data, refreshlist]);
 
-  
-  }, []);
-  
+  const tableHead = Object.keys(data?.[0] || {});
 
   return (
-    <View className="flex-col items-center justify-center ">
-      {data.map((e, index) => (
-        <Text key={index}>{e.GenerateQuestions}</Text>
-      ))}
-    </View>
+    data && (
+      < ScrollView>
+      <View style={{ flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' }}>
+        <Table borderStyle={{ borderWidth: 2, borderColor: 'gray' }}>
+          <Row
+            data={tableHead.map((header) => header.replace(/([A-Z])/g, ' $1').trim())} // Convert camelCase to spaced words
+            style={{ height: 40, backgroundColor: '#f1f8ff' }}
+            textStyle={{ textAlign: 'center', fontWeight: 'bold' }}
+          />
+          <Rows
+            data={data?.map((rowData) => Object.values(rowData)) || []}
+            style={{ height: 80 }}
+            textStyle={{ textAlign: 'center' }}
+          />
+        </Table>
+      </View>
+      </ScrollView>
+    )
   );
-}
+};
+
+export default Dashboard;

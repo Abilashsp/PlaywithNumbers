@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import ShowResult from './ShowResult';
 
+
 const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -27,14 +28,33 @@ const generateOptions = (answer) => {
 };
 
 const generateQuestion = (count, total) => {
-  const num1 = getRandomNumber(1, count);
-  const num2 = getRandomNumber(0, total);
+  const uniqueQuestions = new Set();
+  let question;
+
+  do {
+    question = generateSingleQuestion(count, total);
+  } while (uniqueQuestions.has(JSON.stringify(question)));
+
+  uniqueQuestions.add(JSON.stringify(question));
+
+  return question;
+};
+
+const generateSingleQuestion = (count, total) => {
+  let num1, num2;
+
+  do {
+    num1 = getRandomNumber(1, count);
+    num2 = getRandomNumber(0, total);
+  } while (num1 === num2);
+
   const answer = num1 * num2;
   const options = generateOptions(answer);
   const shuffledOptions = shuffleArray(options);
 
-  return { num1, num2, answer, options:shuffledOptions };
+  return { num1, num2, answer, options: shuffledOptions };
 };
+
 
 const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) => {
   const totalNoquestions = count * totalbuttonvalues;
@@ -48,9 +68,16 @@ const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) 
   const [storeCorrectAnswer, setStoreCorrectAnswer] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const[StoreQuestion,setStoreQuestion]=useState([])
+  
   const [attemptsInfo, setAttemptsInfo] = useState([
     { firstAttempt: false, secondAttempt: false, thirdAttempt: false },
   ]);
+
+
+
+
+
+
 
   
 
@@ -68,7 +95,7 @@ const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) 
     }
     if (timeRemaining === 0) {
       setTimesUp(true);
-      if (questionCount > 0) {
+      if (questionCount > 1) {
         setQuestion(generateQuestion(count, totalbuttonvalues));
         setSelectedAnswer(null);
         setIsCorrect(null);
@@ -79,29 +106,30 @@ const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) 
 
   const handleOptionPress = (selectedOption) => {
     const isAnswerCorrect = selectedOption === question.answer;
+    setstorequestionhere(StoreQuestion)
     if (isAnswerCorrect) {
       setSelectedAnswer(selectedOption);
       setIsCorrect(true);
-setStoreCorrectAnswer(prev=>prev+1)
+      setStoreCorrectAnswer(prev=>prev+1)
 
       setTimeout(() => {
+        setStoreQuestion((prevQuestions) => [...prevQuestions, question]);
+        if(attempts==0) setAttemptsInfo((prevAttemptsInfo) => [
+          ...prevAttemptsInfo,
+          { firstAttempt: true, secondAttempt: false, thirdAttempt: false },
+        ]);
+        if(attempts==1) setAttemptsInfo((prevAttemptsInfo) => [
+          ...prevAttemptsInfo,
+          { firstAttempt: false, secondAttempt: true, thirdAttempt: false },
+        ]);
+        if(attempts==2) setAttemptsInfo((prevAttemptsInfo) => [
+          ...prevAttemptsInfo,
+          { firstAttempt: false, secondAttempt: false, thirdAttempt: true },
+        ]);
         if (questionCount > 1) {
           setQuestion(generateQuestion(count, totalbuttonvalues));
           setQuestionCount((prev) => prev - 1);
           setSelectedAnswer(null);
-          setStoreQuestion((prevQuestions) => [...prevQuestions,question] );
-         if(attempts==0) setAttemptsInfo((prevAttemptsInfo) => [
-            ...prevAttemptsInfo,
-            { firstAttempt: true, secondAttempt: false, thirdAttempt: false },
-          ]);
-          if(attempts==1) setAttemptsInfo((prevAttemptsInfo) => [
-            ...prevAttemptsInfo,
-            { firstAttempt: false, secondAttempt: true, thirdAttempt: false },
-          ]);
-          if(attempts==2) setAttemptsInfo((prevAttemptsInfo) => [
-            ...prevAttemptsInfo,
-            { firstAttempt: false, secondAttempt: false, thirdAttempt: true },
-          ]);
           setIsCorrect(null);
           setAttempts(0);
         } else {
@@ -128,6 +156,19 @@ setStoreCorrectAnswer(prev=>prev+1)
           { firstAttempt: false, secondAttempt: false, thirdAttempt:false },
         ])
         setTimeout(() => {
+          if(attempts==0) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: true, secondAttempt: false, thirdAttempt: false },
+          ]);
+          if(attempts==1) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: false, secondAttempt: true, thirdAttempt: false },
+          ]);
+          if(attempts==2) setAttemptsInfo((prevAttemptsInfo) => [
+            ...prevAttemptsInfo,
+            { firstAttempt: false, secondAttempt: false, thirdAttempt: true },
+          ]);
+          setStoreQuestion((prevQuestions) => [...prevQuestions, question]);
           if (questionCount > 1) {
             setQuestion(generateQuestion(count, totalbuttonvalues));
             setQuestionCount((prev) => prev - 1);
@@ -146,7 +187,7 @@ setStoreCorrectAnswer(prev=>prev+1)
     const seconds = timeRemaining % 60;
     return `${minutes}m:${seconds < 10 ? '0' : ''}${seconds}`;
   };
-  setstorequestionhere(StoreQuestion)
+ 
 
   return (
     <View className="w-full h-full bg-white">

@@ -13,9 +13,10 @@ const App = () => {
 
   const [test, settest] = useState(false)
   const [buttonid, setbuttonid] = useState([])
+  const [selectbuttonid,setselectbuttonid]=useState(null)
   const [totalbuttonvalues, settotalbuttonvalues] = useState(0);
   const [buttonlimit, setbuttonlimit] = useState(6)
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(4);
   const[storequestionhere,setstorequestionhere]=useState([])
   const lowerLimit = 5;
   const upperLimit = 10;
@@ -35,6 +36,7 @@ const App = () => {
     setbuttonid(prev => (
       [...prev, id]
     ))
+    setselectbuttonid(id)
 
   }
   const addedbuttons = (buttonid) => {
@@ -83,7 +85,7 @@ const App = () => {
     buttons.push(
       <TouchableOpacity
         key={i}
-        className='text-white bg-sky-400 mx-2 from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2'
+        className={`text-white bg-sky-400 mx-2 ${selectbuttonid===i?"bg-blue-900":""}  from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2`}
         onPress={() => handlebuttonid(i)}
       >
         <Text>{i}</Text>
