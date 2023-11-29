@@ -27,26 +27,13 @@ const generateOptions = (answer) => {
   return shuffledOptions;
 };
 
+
+
 const generateQuestion = (count, total) => {
-  const uniqueQuestions = new Set();
-  let question;
-
-  do {
-    question = generateSingleQuestion(count, total);
-  } while (uniqueQuestions.has(JSON.stringify(question)));
-
-  uniqueQuestions.add(JSON.stringify(question));
-
-  return question;
-};
-
-const generateSingleQuestion = (count, total) => {
   let num1, num2;
 
-  do {
     num1 = getRandomNumber(1, count);
     num2 = getRandomNumber(0, total);
-  } while (num1 === num2);
 
   const answer = num1 * num2;
   const options = generateOptions(answer);
@@ -72,14 +59,6 @@ const Buttons = ({ count, totalbuttonvalues,setstorequestionhere, navigation }) 
   const [attemptsInfo, setAttemptsInfo] = useState([
     { firstAttempt: false, secondAttempt: false, thirdAttempt: false },
   ]);
-
-
-
-
-
-
-
-  
 
   useEffect(() => {
     const timer = setInterval(() => {

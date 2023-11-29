@@ -6,6 +6,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ShowResult from './screens/ShowResult';
 import Dashboard from './screens/Dashboard';
+import PageDesign from './screens/PageDesign';
+import Dummy from './screens/Dummy';
 
 const Stack = createNativeStackNavigator();
 
@@ -97,7 +99,19 @@ const App = () => {
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="InputTable">
+        <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Dummy">{props => <Dummy {...props} storequestionhere={storequestionhere}/>}</Stack.Screen>
+        <Stack.Screen name="Quiz"   options={{
+          headerTitle: props => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ marginLeft: 0}} />
+              <Text {...props} style={{ fontSize: 25, fontWeight: 'bold',padding:5,borderRadius:10 }}>
+                {props.children}
+              </Text>
+            </View>
+          ),
+        }}>{props =><PageDesign {...props}  count={count} totalbuttonvalues={totalbuttonvalues} setstorequestionhere={setstorequestionhere}
+          />}</Stack.Screen>
           <Stack.Screen name="Home">{props =><InputTable {...props} 
             buttonDecrease={buttonDecrease}
             buttons={buttons}
@@ -105,9 +119,9 @@ const App = () => {
             count={count}
             decrease={decrease}
             increase={increase} />}</Stack.Screen>
-          <Stack.Screen name="Buttons">{props => <Buttons {...props} count={count} totalbuttonvalues={totalbuttonvalues} setstorequestionhere={setstorequestionhere} />}</Stack.Screen>
-          <Stack.Screen name="ShowResult">{props => <ShowResult {...props}/>}</Stack.Screen>
-          <Stack.Screen name="Dashboard">{props => <Dashboard {...props} storequestionhere={storequestionhere}/>}</Stack.Screen>
+           <Stack.Screen name="Buttons">{props => <Buttons {...props} count={count} totalbuttonvalues={totalbuttonvalues} setstorequestionhere={setstorequestionhere} />}</Stack.Screen>
+           <Stack.Screen name="ShowResult">{props => <ShowResult {...props}/>}</Stack.Screen>
+           <Stack.Screen name="Dashboard">{props => <Dashboard {...props} storequestionhere={storequestionhere}/>}</Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </>
