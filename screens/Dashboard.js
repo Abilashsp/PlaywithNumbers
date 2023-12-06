@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
-import * as SQLite from 'expo-sqlite';
+
 
 const Dashboard = ({ route, navigation }) => {
-  const { data, refreshlist } = route.params;
+  const { data } = route.params;
 
-  useEffect(() => {
-    refreshlist();
-  }, [data, refreshlist]);
+console.log("data",data)
 
   const tableHead = Object.keys(data?.[0] || {});
 
